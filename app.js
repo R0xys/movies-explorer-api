@@ -2,10 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const helmet = require('helmet')
 const { errors } = require('celebrate');
 require('dotenv').config();
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { PORT } = require('./constants');
+const { limiter } = require('./middlewares/limiter');
 
 const app = express();
 const corsOptions = {
@@ -21,6 +23,8 @@ const corsOptions = {
 mongoose.connect('mongodb://127.0.0.1/bitfilmsdb');
 
 app.use(cors(corsOptions));
+app.use(helmet());
+app.use(limiter);
 app.use(express.json());
 app.use(cookieParser());
 app.use(requestLogger);
