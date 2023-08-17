@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { urlPattern } = require('../constants');
 
 const movieSchema = new mongoose.Schema(
   {
@@ -25,17 +26,17 @@ const movieSchema = new mongoose.Schema(
     image: {
       type: String,
       required: true,
-      validate: (val) => (/^https?:\/\/(www.)?([\w\-._~:/?#[\]@!$&'()*+,;=])+$/).test(val),
+      validate: (val) => (urlPattern).test(val),
     },
     trailerLink: {
       type: String,
       required: true,
-      validate: (val) => (/^https?:\/\/(www.)?([\w\-._~:/?#[\]@!$&'()*+,;=])+$/).test(val),
+      validate: (val) => (urlPattern).test(val),
     },
     thumbnail: {
       type: String,
       required: true,
-      validate: (val) => (/^https?:\/\/(www.)?([\w\-._~:/?#[\]@!$&'()*+,;=])+$/).test(val),
+      validate: (val) => (urlPattern).test(val),
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,

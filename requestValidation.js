@@ -1,4 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
+const { urlPattern } = require('./constants');
 
 module.exports.updateUserBodyValidator = celebrate({
   body: Joi.object().keys({
@@ -11,7 +12,7 @@ module.exports.createUserBodyValidator = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required(),
-    name: Joi.string().min(2).max(30),
+    name: Joi.string().required().min(2).max(30),
   }),
 });
 
@@ -22,9 +23,9 @@ module.exports.createMoviesBodyValidator = celebrate({
     duration: Joi.number().required(),
     year: Joi.string().required(),
     description: Joi.string().required(),
-    image: Joi.string().uri().regex(/^https?:\/\/(www.)?([\w\-._~:/?#[\]@!$&'()*+,;=])+$/),
-    trailerLink: Joi.string().uri().regex(/^https?:\/\/(www.)?([\w\-._~:/?#[\]@!$&'()*+,;=])+$/),
-    thumbnail: Joi.string().uri().regex(/^https?:\/\/(www.)?([\w\-._~:/?#[\]@!$&'()*+,;=])+$/),
+    image: Joi.string().uri().required().regex(urlPattern),
+    trailerLink: Joi.string().required().uri().regex(urlPattern),
+    thumbnail: Joi.string().required().uri().regex(urlPattern),
     movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
