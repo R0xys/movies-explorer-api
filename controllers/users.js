@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const ConflictError = require('../errors/conflictError');
 const NotFoundError = require('../errors/notFoundError');
 const BadRequestError = require('../errors/badRequestError');
+const { devKey, productionKey, nodeEnv } = require('../constants');
 
 module.exports.getUser = (req, res, next) => {
   const userId = req.user._id;
@@ -45,10 +47,19 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.send({
-      name: user.name,
-      email: user.email,
-    }))
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, nodeEnv === 'production' ? productionKey : devKey, { expiresIn: '7d' });
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+        sameSite: 'None',
+        secure: true,
+      });
+      res.send({
+        name: user.name,
+        email: user.email,
+      });
+    })
     .catch((err) => {
       if (err.code === 11000) next(new ConflictError('Пользователь с таким email уже существует'));
       else if (err instanceof mongoose.Error.ValidationError) next(new BadRequestError('Переданы некорректные данные в метод создания пользователя'));
